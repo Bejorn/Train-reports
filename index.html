@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metrorail updates and reporting</title>
+    <style>
+        :root {
+            --primary-blue: #1976d2;
+            --dark-blue: #0d1a26;
+            --light-blue: #e3f2fd;
+            --white: #fff;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--dark-blue);
+            color: var(--white);
+        }
+        nav {
+            width: 100%;
+            background: var(--primary-blue);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 1.5rem;
+        }
+        .nav-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-links a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--light-blue);
+            transition: width 0.2s;
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .nav-toggle span {
+            height: 3px;
+            width: 25px;
+            background: var(--white);
+            margin: 4px 0;
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                background: var(--primary-blue);
+                position: absolute;
+                top: 100%;
+                right: 0;
+                width: 180px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .nav-toggle {
+                display: flex;
+            }
+        }
+        .hero {
+            height: 60vh;
+            min-height: 350px;
+            background: linear-gradient(rgba(13,26,38,0.7), rgba(25,118,210,0.5)), url('train.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-top: 56px;
+        }
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--white);
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+        section {
+            max-width: 900px;
+            margin: 2.5rem auto;
+            padding: 2rem 1rem;
+            background: rgba(25,118,210,0.07);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        section h2 {
+            color: var(--light-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .hero-title {
+                font-size: 1.5rem;
+            }
+            section {
+                padding: 1.2rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="nav-title">Metrorail</div>
+            <div class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <a href="#home">Home</a>
+                <a href="#report">Report</a>
+                <a href="#updates">View Updates</a>
+            </div>
+        </div>
+    </nav>
+    <section class="hero" id="home">
+        <div>
+            <h1 class="hero-title">Metrorail updates and reporting</h1>
+        </div>
+    </section>
+    <section id="report">
+        <h2>Report</h2>
+        <button id="openReportModal" style="background: var(--primary-blue); color: var(--white); border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer; box-shadow: 0 2px 8px rgba(25,118,210,0.08); transition: background 0.2s;">
+            Report incident or delay
+        </button>
+        <!-- Modal Overlay -->
+        <div id="reportModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(13,26,38,0.75); z-index:200; align-items:center; justify-content:center;">
+            <div id="reportModal" style="background:var(--dark-blue); color:var(--white); border-radius:12px; max-width:400px; width:90%; padding:2rem 1.2rem 1.2rem 1.2rem; box-shadow:0 4px 32px rgba(25,118,210,0.15); position:relative;">
+                <button id="closeReportModal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; color:var(--light-blue); font-size:1.3rem; cursor:pointer;">&times;</button>
+                <h3 style="margin-bottom:1.2rem; color:var(--light-blue); font-size:1.2rem;">Report Incident or Delay</h3>
+                <form id="reportForm"
+      method="POST"
+      action="https://script.google.com/macros/s/AKfycbzKnIQkoC9aNpbyDjblkIS5hqQAr2XZFgwH15MzPQZW3bYZdesjfs-cuYIT-mIqU_9F/exec"
+      target="hidden_iframe"
+      onsubmit="document.getElementById('thankYouMessage').style.display = 'block';">
+
+  <label for="branch">Branch</label>
+  <select name="branch" id="branch" required>
+    <option value="southern line">Southern Line</option>
+    ...
+  </select>
+
+  <label for="trainNumber">Train Number</label>
+  <input type="text" name="trainNumber" id="trainNumber" required />
+
+  <label>Type of problem</label>
+  <input type="radio" name="problemType" value="delay" required> Delay
+  <input type="radio" name="problemType" value="late train"> Late train
+  <input type="radio" name="problemType" value="other"> Other
+
+  <label for="details">Details</label>
+  <textarea name="details" id="details"></textarea>
+
+  <button type="submit">Submit</button>
+</form>
+
+<iframe name="hidden_iframe" style="display:none;"></iframe>
+
+<div id="thankYouMessage" style="display:none;">
+  Thank you for reporting your problem.
+</div>
+
+  <label for="details" style="display:block; margin-bottom:0.4rem;">Details</label>
+  <textarea id="details" name="details" rows="4" style="width:100%; padding:0.5rem; border-radius:5px;" required></textarea>
+
+  <button type="submit" style="background:var(--primary-blue); color:var(--white); border:none; padding:0.6rem 1.2rem; border-radius:5px;">Submit</button>
+</form>
+
+<iframe name="hidden_iframe" style="display:none;"></iframe>
+<div id="thankYouMessage" style="display:none; text-align:center; margin-top:1.5rem; color:var(--light-blue);">
+  Thank you for reporting your problem
+</div>
+            </div>
+        </div>
+    </section>
+    <section id="updates">
+        <h2>View Updates</h2>
+        <p>
+            Stay up to date with the latest service updates, delays, and important announcements for your Metrorail journey.
+        </p>
+        <!-- Add updates feed or content here -->
+    </section>
+    <script>
+        // Smooth scroll for nav links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: target.offsetTop - 56,
+                        behavior: 'smooth'
+                    });
+                    // Close nav on mobile
+                    document.getElementById('navLinks').classList.remove('active');
+                }
+            });
+        });
+        // Mobile nav toggle
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('active');
+        });
+        // Modal logic for report section
+        const openBtn = document.getElementById('openReportModal');
+        const overlay = document.getElementById('reportModalOverlay');
+        const closeBtn = document.getElementById('closeReportModal');
+        const form = document.getElementById('reportForm');
+        const thankYou = document.getElementById('thankYouMessage');
+
+        openBtn.addEventListener('click', () => {
+            overlay.style.display = 'flex';
+            form.style.display = '';
+            thankYou.style.display = 'none';
+        });
+        closeBtn.addEventListener('click', () => {
+            overlay.style.display = 'none';
+        });
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.style.display = 'none';
+        });
+
+        // Google Apps Script Web App endpoint
+        const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKnIQkoC9aNpbyDjblkIS5hqQAr2XZFgwH15MzPQZW3bYZdesjfs-cuYIT-mIqU_9F/exec';
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            // Gather form data
+            const branch = document.getElementById('branch').value;
+            const trainNumber = document.getElementById('trainNumber').value;
+            const problemType = form.elements['problemType'].value;
+            const details = document.getElementById('details').value;
+
+            // Prepare payload
+            const payload = {
+                branch,
+                trainNumber,
+                problemType,
+                details
+            };
+
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText);
+}
+                form.style.display = 'none';
+                thankYou.style.display = 'block';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 1800);
+            } catch (error) {
+    alert('Failed to submit report: ' + error.message);
+    console.error(error);
+}
+        });
+
+        // Fetch and display updates
+        async function fetchUpdates() {
+            try {
+                const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+                const data = await response.json();
+                // Assume data is an array of objects with keys: branch, trainNumber, problemType, details, timestamp
+                const updatesList = document.createElement('ul');
+                updatesList.style.listStyle = 'none';
+                updatesList.style.padding = '0';
+                updatesList.style.margin = '0';
+
+                (data.slice(-10).reverse()).forEach(entry => {
+                    const li = document.createElement('li');
+                    li.style.background = 'rgba(25,118,210,0.13)';
+                    li.style.marginBottom = '1rem';
+                    li.style.padding = '1rem';
+                    li.style.borderRadius = '8px';
+                    li.innerHTML = `
+                        <div style="font-weight:600; color:var(--light-blue); margin-bottom:0.3rem;">
+                            ${entry.branch || 'Unknown branch'} &mdash; Train ${entry.trainNumber || 'N/A'}
+                        </div>
+                        <div style="margin-bottom:0.3rem;">
+                            <span style="font-weight:500; color:var(--primary-blue);">${entry.problemType || 'Unknown'}</span>
+                        </div>
+                        <div style="margin-bottom:0.3rem;">
+                            ${entry.details ? entry.details.replace(/\n/g, '<br>') : ''}
+                        </div>
+                        <div style="font-size:0.95em; color:#b0c4de;">
+                            ${entry.timestamp ? new Date(entry.timestamp).toLocaleString() : ''}
+                        </div>
+                    `;
+                    updatesList.appendChild(li);
+                });
+
+                const updatesSection = document.getElementById('updates');
+                // Remove any previous list
+                const prevList = updatesSection.querySelector('ul');
+                if (prevList) prevList.remove();
+                updatesSection.appendChild(updatesList);
+            } catch (err) {
+                const updatesSection = document.getElementById('updates');
+                updatesSection.innerHTML += `<div style="color:#ffb3b3; margin-top:1rem;">Could not load updates.</div>`;
+            }
+        }
+
+        // Call fetchUpdates on page load
+        fetchUpdates();
+    </script>
+</body>
+</html>
