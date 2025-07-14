@@ -264,45 +264,6 @@
         // Google Apps Script Web App endpoint
         const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKnIQkoC9aNpbyDjblkIS5hqQAr2XZFgwH15MzPQZW3bYZdesjfs-cuYIT-mIqU_9F/exec';
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            // Gather form data
-            const branch = document.getElementById('branch').value;
-            const trainNumber = document.getElementById('trainNumber').value;
-            const problemType = form.elements['problemType'].value;
-            const details = document.getElementById('details').value;
-
-            // Prepare payload
-            const payload = {
-                branch,
-                trainNumber,
-                problemType,
-                details
-            };
-
-            try {
-                const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText);
-}
-                form.style.display = 'none';
-                thankYou.style.display = 'block';
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 1800);
-            } catch (error) {
-    alert('Failed to submit report: ' + error.message);
-    console.error(error);
-}
-        });
-
         // Fetch and display updates
         async function fetchUpdates() {
             try {
