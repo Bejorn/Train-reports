@@ -207,11 +207,6 @@
   </div>
 </div>
 
-
-<iframe name="hidden_iframe" style="display:none;"></iframe>
-<div id="thankYouMessage" style="display:none; text-align:center; margin-top:1.5rem; color:var(--light-blue);">
-  Thank you for reporting your problem
-</div>
             </div>
         </div>
     </section>
@@ -313,6 +308,11 @@
             }
         }
 
+        // Call fetchUpdates on page load
+        fetchUpdates();
+    </script>
+</body>
+</html>
         // Call fetchUpdates on page load
         fetchUpdates();
     </script>
