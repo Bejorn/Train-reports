@@ -189,9 +189,18 @@
 
       <label>Type of problem</label>
       <div style="margin-bottom:1rem;">
-        <label><input type="radio" name="problemType" value="delay" required /> Delay</label><br/>
-        <label><input type="radio" name="problemType" value="late train" /> Late train</label><br/>
-        <label><input type="radio" name="problemType" value="other" /> Other</label>
+        <label>
+          <input type="radio" name="problemType" value="delay" required />
+          Delay
+        </label><br/>
+        <label>
+          <input type="radio" name="problemType" value="late train" />
+          Late train
+        </label><br/>
+        <label>
+          <input type="radio" name="problemType" value="other" />
+          Other
+        </label>
       </div>
 
       <label for="details">Details</label>
@@ -243,6 +252,9 @@
         const closeBtn = document.getElementById('closeReportModal');
         const form = document.getElementById('reportForm');
         const thankYou = document.getElementById('thankYouMessage');
+
+        // Ensure modal is hidden on page load
+        overlay.style.display = 'none';
 
         openBtn.addEventListener('click', () => {
             overlay.style.display = 'flex';
@@ -313,8 +325,4 @@
     </script>
 </body>
 </html>
-        // Call fetchUpdates on page load
-        fetchUpdates();
-    </script>
-</body>
-</html>
+
